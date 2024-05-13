@@ -5,61 +5,57 @@ using System.Net.Sockets;
 
 public class Server1
 {
+    // Server - Client Communication using Socket Class , Two-way communication by TURN 
 
-    private const int BUFFER_SIZE = 1024;
     private const int PORT_NUMBER = 9999;
-
-    static ASCIIEncoding encoding = new ASCIIEncoding();
-
-    public static void Main()
+    public static async Task Main()
     {
-        try
+        var hostName = Dns.GetHostName();
+        IPHostEntry localhost = await Dns.GetHostEntryAsync(hostName);
+        IPAddress localIpAddress = localhost.AddressList[0];
+        IPEndPoint iPEndPoint = new IPEndPoint(localIpAddress, PORT_NUMBER);
+        using Socket listener = new Socket(localIpAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+
+        Console.WriteLine("Server started on " + listener.LocalEndPoint);
+        Console.WriteLine("Waiting for connection...");
+
+
+        listener.Bind(iPEndPoint);
+        listener.Listen(100);
+        var handler = await listener.AcceptAsync();
+
+        Console.WriteLine("Connection received from " + handler.RemoteEndPoint);
+
+
+        while (true)
         {
-            IPAddress address = IPAddress.Parse("127.0.0.1");
-
-            TcpListener listener = new TcpListener(address, PORT_NUMBER);
-
-            // 1. listen
-            listener.Start();
-
-            Console.WriteLine("Server started on " + listener.LocalEndpoint);
-            Console.WriteLine("Waiting for a connection...");
-
-            Socket socket = listener.AcceptSocket();
-            Console.WriteLine("Connection received from " + socket.RemoteEndPoint);
-
-            var stream = new NetworkStream(socket);
-            var reader = new StreamReader(stream);
-            var writer = new StreamWriter(stream);
-            while (true)
+            try
             {
-                try
-                {
-                    // 2. receive
-                    string messageFromClient = reader.ReadLine().Trim();
+                // Receive message.
+                var buffer = new byte[1_024];
+                var received = await handler.ReceiveAsync(buffer, SocketFlags.None);
+                var response = Encoding.UTF8.GetString(buffer, 0, received);
 
-                    if (string.IsNullOrEmpty(messageFromClient) || messageFromClient.ToUpper() == "EXIT")
-                    {
-                        writer.WriteLine("BYE");
-                        break;
-                    }
-                    Console.WriteLine("Client: " + messageFromClient);
-                }
-                catch (IOException e)
+                if (!string.IsNullOrEmpty(response) && response.ToUpper() == "EXIT")
                 {
-                    Console.WriteLine(e);
+                    Console.WriteLine("Disconnected");
+                    break;
+                }
+                Console.WriteLine($"Client message: \"{response}\"");
+
+                // Send message
+                Console.Write("Send Client message: ");
+                var messageToClient = Console.ReadLine();
+                if (!string.IsNullOrEmpty(messageToClient))
+                {
+                    var echoBytes = Encoding.UTF8.GetBytes(messageToClient);
+                    await handler.SendAsync(echoBytes, 0);
                 }
             }
-            stream.Close();
-            writer.Close();
-            socket.Close();
-            listener.Stop();
+            catch (Exception ex) { Console.WriteLine(ex); }
+        }
 
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Error: " + ex);
-        }
-        Console.Read();
+        listener.Close();
+        handler.Close();
     }
 }

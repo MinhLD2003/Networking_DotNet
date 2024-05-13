@@ -6,37 +6,46 @@ using System.Net.Sockets;
 
 public class Client1
 {
-
-    private const int BUFFER_SIZE = 1024;
+    // Server - Client Communication using Socket Class
     private const int PORT_NUMBER = 9999;
-
-    static ASCIIEncoding encoding = new ASCIIEncoding();
-
-    public static void Main()
+    public static async Task Main()
     {
-
         try
         {
-            TcpClient client = new TcpClient();
+            // Startup variables
+            var hostName = Dns.GetHostName();
+            IPHostEntry localhost = await Dns.GetHostEntryAsync(hostName);
+            IPAddress localIpAddress = localhost.AddressList[0];
+            IPEndPoint iPEndPoint = new IPEndPoint(localIpAddress, PORT_NUMBER);
+            using Socket client = new Socket(iPEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            await client.ConnectAsync(iPEndPoint);
 
-            // 1. connect
-            client.Connect("127.0.0.1", PORT_NUMBER);
-            Stream stream = client.GetStream();
-
-            Console.WriteLine("Connected to Server.");
-            var reader = new StreamReader(stream);
-            var writer = new StreamWriter(stream);
-            writer.AutoFlush = true;
             while (true)
             {
                 try
                 {
-                    Console.Write("Message to Server: ");
-                    string messageToServer = Console.ReadLine().Trim();
-                    if (!string.IsNullOrEmpty(messageToServer))
+                    Console.Write("Send Server message: ");
+                    var message = Console.ReadLine().Trim();
+                    if (string.IsNullOrEmpty(message))
                     {
-                        writer.WriteLine(messageToServer);
+                        Console.WriteLine("Please enter messages");
+                        continue;
                     }
+                    var messageBytes = Encoding.UTF8.GetBytes(message);
+                    await client.SendAsync(messageBytes, SocketFlags.None);
+                    if (message.ToUpper() == "EXIT")
+                    {
+                        Console.WriteLine("Goodbye!!!...");
+                        Console.WriteLine("Disconnected...");
+                        break;
+                    }
+                    // Receive ack.
+                    var buffer = new byte[1_024];
+                    var receivedMessage = await client.ReceiveAsync(buffer, SocketFlags.None);
+                    var response = Encoding.UTF8.GetString(buffer, 0, receivedMessage);
+
+                    Console.WriteLine(
+                        $"Server message: \"{response}\"");
 
                 }
                 catch (IOException e)
@@ -44,8 +53,8 @@ public class Client1
                     Console.WriteLine("Ex" + e);
                 }
             }
-            stream.Close();
-            client.Close();
+            client.Shutdown(SocketShutdown.Both);
+
         }
 
         catch (Exception ex)
