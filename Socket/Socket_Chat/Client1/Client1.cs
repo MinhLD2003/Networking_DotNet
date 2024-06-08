@@ -19,7 +19,7 @@ public class Client1
             IPEndPoint iPEndPoint = new IPEndPoint(localIpAddress, PORT_NUMBER);
             using Socket client = new Socket(iPEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-            client.ConnectAsync(iPEndPoint).Wait();  // Ensuring connection is established
+            client.ConnectAsync(iPEndPoint).Wait();  
 
             Task sendTask = SendMessage(client);
             Task receiveTask = ReceiveMessage(client);

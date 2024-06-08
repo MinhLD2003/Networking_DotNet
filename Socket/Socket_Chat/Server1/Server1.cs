@@ -16,7 +16,7 @@ public class Server1
     {
         try
         {
-            // init variables
+           
             var hostName = Dns.GetHostName();
             IPHostEntry localhost = Dns.GetHostEntry(hostName);
             IPAddress localIpAddress = localhost.AddressList[0];
@@ -24,8 +24,6 @@ public class Server1
             listener = new Socket(localIpAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             listener.Bind(iPEndPoint);
             listener.Listen(100);
-
-
             Console.WriteLine("Server started on " + listener.LocalEndPoint);
             Console.WriteLine("Waiting for connection...");
             Task.Run(() => ListenForClients());

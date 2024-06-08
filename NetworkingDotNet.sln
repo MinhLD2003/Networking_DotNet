@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetworkingDotNet", "Network
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Socket_Chat", "Socket_Chat", "{B1765C00-B7AE-4642-B5E9-9440FC629F5C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client1", "Socket\Socket_Chat\Client1\Client1.csproj", "{63DEF5FF-9DBE-4BF7-841D-E40CBDF77D32}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client1", "Socket\Socket_Chat\Client1\Client1.csproj", "{63DEF5FF-9DBE-4BF7-841D-E40CBDF77D32}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server1", "Socket\Socket_Chat\Server1\Server1.csproj", "{D86F9B83-457C-4CA7-91F7-21E8D93B7803}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server1", "Socket\Socket_Chat\Server1\Server1.csproj", "{D86F9B83-457C-4CA7-91F7-21E8D93B7803}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client1", "Socket\Socket_UDP\Client1\Client1.csproj", "{A3855F40-E4C6-4F66-8443-A4A52AAF85D5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,10 @@ Global
 		{D86F9B83-457C-4CA7-91F7-21E8D93B7803}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D86F9B83-457C-4CA7-91F7-21E8D93B7803}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D86F9B83-457C-4CA7-91F7-21E8D93B7803}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3855F40-E4C6-4F66-8443-A4A52AAF85D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3855F40-E4C6-4F66-8443-A4A52AAF85D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3855F40-E4C6-4F66-8443-A4A52AAF85D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3855F40-E4C6-4F66-8443-A4A52AAF85D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
